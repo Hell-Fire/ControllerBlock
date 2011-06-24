@@ -85,7 +85,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener implemen
 		} else if ((conBlock = parent.getControllerBlockFor(null, b.getLocation(), b.getType(), null)) != null) {
 			switch ((BlockProtectMode)parent.getConfig().getOpt(Option.BlockProtectMode)) {
 			case protect:
-				if (conBlock.protectedLevel == 0 || (!conBlock.on && conBlock.protectedLevel != 2)) {
+				if (conBlock.protectedLevel == 0 || (!conBlock.isOn() && conBlock.protectedLevel != 2)) {
 					player.sendMessage("This block is controlled by a controller block at " + 
 							conBlock.getLoc().getBlockX() + ", " +
 							conBlock.getLoc().getBlockY() + ", " +

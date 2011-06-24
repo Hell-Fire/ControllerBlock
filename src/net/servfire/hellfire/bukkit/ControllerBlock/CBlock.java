@@ -22,7 +22,7 @@ public class CBlock {
 	private String owner = null;
 	
 	private ControllerBlock parent = null;
-	public boolean on = false;
+	private boolean on = false;
 	private boolean edit = false;
 	public byte protectedLevel = 0; // 0 is fully, 1 partially and 2 unprotected
 	
