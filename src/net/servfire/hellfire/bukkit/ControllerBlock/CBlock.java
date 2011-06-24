@@ -22,13 +22,15 @@ public class CBlock {
 	private String owner = null;
 	
 	private ControllerBlock parent = null;
-	private boolean on = false;
+	public boolean on = false;
 	private boolean edit = false;
+	public byte protectedLevel = 0; // 0 is fully, 1 partially and 2 unprotected
 	
-	public CBlock(ControllerBlock p, Location l, String o) {
+	public CBlock(ControllerBlock p, Location l, String o, byte pl) {
 		parent = p;
 		blockLocation = l;
 		owner = o;
+		protectedLevel = pl;
 	}
 	
 	public ControllerBlock getParent() {
@@ -191,7 +193,7 @@ public class CBlock {
 			if (check != null) {
 				cur.setType(check.blockType);
 				cur.setData(check.getBlock(loc).blockData);
-			} else {
+			} else if (protectedLevel == 0) {
 				cur.setType(Material.AIR);
 			}
 		}
@@ -258,6 +260,17 @@ public class CBlock {
 			i = 5;
 		}
 		
+		// Assume protected (keeps compatibility with older version save files)
+		protectedLevel = 0;
+		if (args[i].equals("semi-protected")) {
+			protectedLevel = 1;
+			i++;
+		}
+		else if (args[i].equals("unprotected")) {
+			protectedLevel = 2;
+			i++;
+		}
+		
 		while (i < args.length) {
 			if (version == 1) {
 				if (args.length - i >= 4) {
@@ -294,6 +307,13 @@ public class CBlock {
 		String result = loc2str(blockLocation);
 		result += "," + blockType;
 		result += "," + owner;
+		// Loading code assumes protected, only add something if it's otherwise
+		if (protectedLevel == 1) {
+			result += ",semi-protected";
+		}
+		else if (protectedLevel == 2) {
+			result += ",unprotected";
+		}
 		Iterator<BlockDesc> i = placedBlocks.iterator();
 		while (i.hasNext()) {
 			BlockDesc b = i.next();

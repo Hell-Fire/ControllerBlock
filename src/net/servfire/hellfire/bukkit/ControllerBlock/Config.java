@@ -8,6 +8,8 @@ public class Config {
 	
 	public enum Option {
 		ControllerBlockType,
+		SemiProtectedControllerBlockType,
+		UnProtectedControllerBlockType,
 		ServerOpIsAdmin,
 		AnyoneCanCreate,
 		AnyoneCanModifyOther,
@@ -42,6 +44,10 @@ public class Config {
 			switch (opt) {
 			case ControllerBlockType:
 				return Material.IRON_BLOCK;
+			case SemiProtectedControllerBlockType:
+				return Material.GOLD_BLOCK;
+			case UnProtectedControllerBlockType:
+				return Material.DIAMOND_BLOCK;
 			case QuickRedstoneCheck:
 				return false;
 			case BlockProtectMode:

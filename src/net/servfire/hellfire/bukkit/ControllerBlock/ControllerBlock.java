@@ -133,8 +133,8 @@ public class ControllerBlock extends JavaPlugin implements Runnable {
 	 */
 	public List<CBlock> blocks = new ArrayList<CBlock>();
 
-	public CBlock createCBlock(Location l, String o) {
-		CBlock c = new CBlock(this, l, o);
+	public CBlock createCBlock(Location l, String o, byte pl) {
+		CBlock c = new CBlock(this, l, o, pl);
 		blocks.add(c);
 		return c;
 	}
@@ -294,10 +294,20 @@ public class ControllerBlock extends JavaPlugin implements Runnable {
 	 * Configuration handling
 	 */
 	private Material CBlockType;
+	private Material semiProtectedCBlockType;
+	private Material unProtectedCBlockType;
 	private List<Material> DisallowedTypes = new ArrayList<Material>();
 	
 	public Material getCBlockType() {
 		return CBlockType;
+	}
+	
+	public Material getSemiProtectedCBlockType() {
+		return semiProtectedCBlockType;
+	}
+	
+	public Material getUnProtectedCBlockType() {
+		return unProtectedCBlockType;
 	}
 	
 	public boolean isValidMaterial(Material m) {
@@ -355,7 +365,23 @@ public class ControllerBlock extends JavaPlugin implements Runnable {
 							CBlockType = Material.IRON_BLOCK;
 						}
 						config.setOpt(Option.ControllerBlockType, CBlockType);
-						
+					
+					} else if (cmd.equals("SemiProtectedControllerBlockType".toLowerCase())) {
+						semiProtectedCBlockType = Material.getMaterial(arg);
+						if (semiProtectedCBlockType == null) {
+							loadError("SemiProtectedControllerBlockType", arg, l, "GOLD_BLOCK");
+							semiProtectedCBlockType = Material.GOLD_BLOCK;
+						}
+						config.setOpt(Option.SemiProtectedControllerBlockType, semiProtectedCBlockType);
+					
+					} else if (cmd.equals("UnProtectedControllerBlockType".toLowerCase())) {
+						unProtectedCBlockType = Material.getMaterial(arg);
+						if (unProtectedCBlockType == null) {
+							loadError("UnProtectedControllerBlockType", arg, l, "DIAMOND_BLOCK");
+							unProtectedCBlockType = Material.DIAMOND_BLOCK;
+						}
+						config.setOpt(Option.UnProtectedControllerBlockType, unProtectedCBlockType);
+					
 					} else if (cmd.equals("QuickRedstoneCheck".toLowerCase())) {
 						config.setOpt(Option.QuickRedstoneCheck, Boolean.parseBoolean(arg));
 						
@@ -455,6 +481,23 @@ public class ControllerBlock extends JavaPlugin implements Runnable {
 				dump += "# ControllerBlockType is the material allowed of new ControllerBlocks\n";
 				dump += "# Doesn't affect already assigned ControllerBlocks\n";
 				dump += "ControllerBlockType=" + config.getOpt(Option.ControllerBlockType) + "\n";
+			}
+			if (!config.hasOption(Option.SemiProtectedControllerBlockType)) {
+				dump += "\n";
+				dump += "# SemiProtectedControllerBlockType is the material that semi-protected\n";
+				dump += "# Controller Blocks are made from, this block will turn on in a protected\n";
+				dump += "# state, but when turned off, blocks controlled won't disappear, instead\n";
+				dump += "# they lose their protection and can be destroyed";
+				dump += "SemiProtectedControllerBlockType=" + config.getOpt(Option.SemiProtectedControllerBlockType) + "\n";
+			}
+			if (!config.hasOption(Option.UnProtectedControllerBlockType)) {
+				dump += "\n";
+				dump += "# UnProtectedControllerBlockType is the material that unprotected\n";
+				dump += "# Controller Blocks are made from, blocks controlled by this will create\n";
+				dump += "# when turned on, but won't disappear when turned off, much like the\n";
+				dump += "# semi-protected controlled blocks, however, blocks controlled have no\n";
+				dump += "# protection against being broken even in the on state\n";
+				dump += "UnProtectedControllerBlockType=" + config.getOpt(Option.UnProtectedControllerBlockType) + "\n";
 			}
 			if (!config.hasOption(Option.QuickRedstoneCheck)) {
 				dump += "\n";

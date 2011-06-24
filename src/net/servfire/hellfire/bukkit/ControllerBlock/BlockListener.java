@@ -85,11 +85,13 @@ public class BlockListener extends org.bukkit.event.block.BlockListener implemen
 		} else if ((conBlock = parent.getControllerBlockFor(null, b.getLocation(), b.getType(), null)) != null) {
 			switch ((BlockProtectMode)parent.getConfig().getOpt(Option.BlockProtectMode)) {
 			case protect:
-				player.sendMessage("This block is controlled by a controller block at " + 
-						conBlock.getLoc().getBlockX() + ", " +
-						conBlock.getLoc().getBlockY() + ", " +
-						conBlock.getLoc().getBlockZ());
-				e.setCancelled(true);
+				if (conBlock.protectedLevel == 0 || (!conBlock.on && conBlock.protectedLevel != 2)) {
+					player.sendMessage("This block is controlled by a controller block at " + 
+							conBlock.getLoc().getBlockX() + ", " +
+							conBlock.getLoc().getBlockY() + ", " +
+							conBlock.getLoc().getBlockZ());
+					e.setCancelled(true);
+				}
 				break;
 			case remove:
 				conBlock.delBlock(b);
@@ -147,18 +149,32 @@ public class BlockListener extends org.bukkit.event.block.BlockListener implemen
 			if (conBlock == null) {
 				// Check if what we hit isn't a ControllerBlock and if it's the right type for one	
 				conBlock = parent.getCBlock(b.getLocation());
-				if (conBlock == null && b.getType() == parent.getCBlockType()) {
-					if (!isRedstone(b.getRelative(BlockFace.UP))) return;
+				if (conBlock == null) {
+					if (!isRedstone(b.getRelative(BlockFace.UP))) return; // Require redstone on top of the block
+					String cBTypeStr;
+					byte cBType;
+					if (b.getType() == parent.getCBlockType()) {
+						cBTypeStr = "protected";
+						cBType = 0;
+					} else if (b.getType() == parent.getSemiProtectedCBlockType()) {
+						cBTypeStr = "semi-protected";
+						cBType = 1;
+					} else if (b.getType() == parent.getUnProtectedCBlockType()) {
+						cBTypeStr = "unprotected";
+						cBType = 2;
+					} else {
+						return; // Don't know what type it's supposed to be
+					}
 					if (!parent.getPerm().canCreate(player)) {
-						player.sendMessage("You're not allowed to create ControllerBlocks");
+						player.sendMessage("You're not allowed to create " + cBTypeStr + " ControllerBlocks");
 						return;
 					}
 					if (parent.isControlledBlock(b.getLocation())) {
 						player.sendMessage("This block is controlled, controlled blocks can't be controllers");
 						return;
 					}
-					conBlock = parent.createCBlock(b.getLocation(), player.getName());
-					player.sendMessage("Created controller block");
+					conBlock = parent.createCBlock(b.getLocation(), player.getName(), cBType);
+					player.sendMessage("Created " + cBTypeStr + " controller block");
 				}
 				// See if what we've hit is a ControllerBlock (might have just been created)
 				if (conBlock == null) return;
