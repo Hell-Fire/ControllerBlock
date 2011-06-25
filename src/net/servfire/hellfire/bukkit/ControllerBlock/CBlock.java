@@ -262,6 +262,10 @@ public class CBlock {
 		
 		// Assume protected (keeps compatibility with older version save files)
 		protectedLevel = 0;
+		if (args[i].equals("protected")) {
+			protectedLevel = 0;
+			i++;
+		}
 		if (args[i].equals("semi-protected")) {
 			protectedLevel = 1;
 			i++;
@@ -310,8 +314,7 @@ public class CBlock {
 		// Loading code assumes protected, only add something if it's otherwise
 		if (protectedLevel == 1) {
 			result += ",semi-protected";
-		}
-		else if (protectedLevel == 2) {
+		} else if (protectedLevel == 2) {
 			result += ",unprotected";
 		}
 		Iterator<BlockDesc> i = placedBlocks.iterator();
