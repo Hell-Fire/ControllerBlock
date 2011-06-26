@@ -262,17 +262,19 @@ public class CBlock {
 		
 		// Assume protected (keeps compatibility with older version save files)
 		protectedLevel = 0;
-		if (args[i].equals("protected")) {
-			protectedLevel = 0;
-			i++;
-		}
-		if (args[i].equals("semi-protected")) {
-			protectedLevel = 1;
-			i++;
-		}
-		else if (args[i].equals("unprotected")) {
-			protectedLevel = 2;
-			i++;
+		if (i < args.length){ // CBs with no controlled blocks die without this
+			if (args[i].equals("protected")) {
+				protectedLevel = 0;
+				i++;
+			}
+			if (args[i].equals("semi-protected")) {
+				protectedLevel = 1;
+				i++;
+			}
+			else if (args[i].equals("unprotected")) {
+				protectedLevel = 2;
+				i++;
+			}
 		}
 		
 		while (i < args.length) {
