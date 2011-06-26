@@ -487,7 +487,7 @@ public class ControllerBlock extends JavaPlugin implements Runnable {
 				dump += "# SemiProtectedControllerBlockType is the material that semi-protected\n";
 				dump += "# Controller Blocks are made from, this block will turn on in a protected\n";
 				dump += "# state, but when turned off, blocks controlled won't disappear, instead\n";
-				dump += "# they lose their protection and can be destroyed";
+				dump += "# they lose their protection and can be destroyed\n";
 				dump += "SemiProtectedControllerBlockType=" + config.getOpt(Option.SemiProtectedControllerBlockType) + "\n";
 			}
 			if (!config.hasOption(Option.UnProtectedControllerBlockType)) {
